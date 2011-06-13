@@ -1,0 +1,6 @@
+Painter 2 - (codename cramflack)
+===
+
+A not quite ground up rewrite of painter
+
+
