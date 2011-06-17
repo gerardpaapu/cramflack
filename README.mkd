@@ -3,4 +3,4 @@ Painter 2 - (codename cramflack)
 
 A not quite ground up rewrite of painter
 
-
+The basic concept is to represent a document state as a persistent tree of non-destructive edits.
