@@ -1,7 +1,7 @@
 Concepts of CRAMFLACK~ 
 =======
 
-A Document is a collection of DocumentStates. `Document.currentState` is the DocumentState that represents the current state of the document, `Document.history` is a (variable-size) FIFO stack of DocumentStates.
+A Document\* is a collection of DocumentStates. `Document.currentState` is the DocumentState that represents the current state of the document, `Document.history` is a (variable-size) FIFO stack of DocumentStates.
 
     Document = { DocumentState currentState, Stack<DocumentState> history }
 
@@ -44,3 +44,5 @@ A LayerGroup is ?? IDK
     LayerGroup ::== (LayerGroup, LayerGroup)
                ::== Layer
                ::== EmptyLayerGroup
+
+\* just remembered that 'document' is a global in browsers... do I care enough to name the Document class something else?
