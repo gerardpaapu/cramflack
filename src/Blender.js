@@ -1,12 +1,6 @@
 define("Blender", ["Color"], function (Color) {
     var Blender,
 
-        // I learned as a child to fear division above all
-        // things... perhaps I was wrong... perhaps this 
-        // is premature... anyway I've avoided dividing
-        // by 255 and instead I multiplied by inv_255
-        inv_255 = 1 / 255,
-
         // blending modes
         normal, dissolve,
         multiply, screen,
@@ -31,13 +25,14 @@ define("Blender", ["Color"], function (Color) {
         combine: function (top, bottom) {
             throw new Error("Not Implemented");
         },
+
         name: null
     };
 
     normal = Blender.normal = new Blender();
     normal.name = "Normal";
     normal.combine = function (top, bottom) {
-        var result = new Color.RGBA();
+        var result = new Color.FRGBA();
 
         result.red = weighted_mean(top.red, bottom.red, top.alpha, bottom.alpha); 
         result.green = weighted_mean(top.green, bottom.green, top.alpha, bottom.alpha); 
@@ -50,11 +45,11 @@ define("Blender", ["Color"], function (Color) {
     dissolve = Blender.dissolve = new Blender();
     dissolve.name = "Dissolve";
     dissolve.combine = function (top, bottom) {
-        var result = new Color.RGBA(),
+        var result = new Color.FRGBA(),
             source;
 
-        top = top.toRGBA();
-        bottom = bottom.toRGBA();
+        top = top.toFRGBA();
+        bottom = bottom.toFRGBA();
 
         source = (top.alpha > Math.random()) ? top : bottom;
 
@@ -69,15 +64,14 @@ define("Blender", ["Color"], function (Color) {
     multiply = Blender.multiply = new Blender();
     multiply.name = "Multiply";
     multiply.combine = function (top, bottom) {
-        var result = new Color.RGBA(),
-            inv_255 = 1 / 255;
+        var result = new Color.FRGBA();
 
-        top = top.toRGBA();
-        bottom = bottom.toRGBA();
+        top = top.toFRGBA();
+        bottom = bottom.toFRGBA();
         
-        result.red   = top.red * bottom.red * inv_255;
-        result.green = top.green * bottom.green * inv_255;
-        result.blue  = top.blue * bottom.blue * inv_255;
+        result.red   = top.red * bottom.red;
+        result.green = top.green * bottom.green;
+        result.blue  = top.blue * bottom.blue;
         result.alpha = top.alpha;
 
         return normal.combine(result, bottom);
@@ -90,12 +84,12 @@ define("Blender", ["Color"], function (Color) {
 
         f = function (a, b) {
             // I wonder if closure would inline this
-            return 255 - ((255 - a) * (255 - b) * inv_255);
+            return 1 - ((1 - a) * (1 - b));
         };
 
-        top = top.toRGBA();
-        bottom = bottom.toRGBA();
-        result = new Color.RGBA(); 
+        top = top.toFRGBA();
+        bottom = bottom.toFRGBA();
+        result = new Color.FRGBA(); 
 
         result.red = f(top.red, bottom.red);
         result.green = f(top.green, bottom.green);
@@ -113,7 +107,7 @@ define("Blender", ["Color"], function (Color) {
         top = top.toHSLA();
         bottom = bottom.toHSLA();
 
-        result.hue = top.hue * top.alpha + (1 - top.alpha) * bottom.hue;
+        result.hue = top.hue;
         result.saturation = bottom.saturation;
         result.luminosity = bottom.luminosity;
         result.alpha = top.alpha;
@@ -129,7 +123,7 @@ define("Blender", ["Color"], function (Color) {
         bottom = bottom.toHSLA();
 
         result.hue = bottom.hue;
-        result.saturation = top.saturation * top.alpha + (1 - top.alpha) * bottom.saturation;
+        result.saturation = top.saturation;
         result.luminosity = bottom.luminosity;
         result.alpha = top.alpha;
 
@@ -145,7 +139,7 @@ define("Blender", ["Color"], function (Color) {
 
         result.hue = bottom.hue;
         result.saturation = bottom.saturation;
-        result.luminosity = top.luminosity * top.alpha + (1 - top.alpha) * bottom.luminosity;
+        result.luminosity = top.luminosity;
         result.alpha = top.alpha;
 
         return normal.combine(result, bottom);

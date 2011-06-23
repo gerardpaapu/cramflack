@@ -42,7 +42,7 @@ define("PixelBuffer", ["Rect", "Color", "Blender"], function (Color) {
             var i = this.length, color, j;
 
             while (i--) {
-                color = this.getIndex(i).toRGB();
+                color = this.getIndex(i).toRGBA();
                 j = i * 4;
                 buffer[j + 0] = color.red;
                 buffer[j + 1] = color.green;
@@ -66,11 +66,21 @@ define("PixelBuffer", ["Rect", "Color", "Blender"], function (Color) {
         }
     };
 
-    SparsePixelBuffer = function (buffer, top, left, width, height) {
-
+    // Access the contents of an existing PixelBuffer through
+    SparsePixelBuffer = function (buffer, rect) {
+        this.rect = rect;
+        this.buffer = buffer;
+        this.offset = {
+            x: this.buffer.rect.left - this.rect.left,
+            y: this.buffer.rect.top - this.rect.top
+        };
     };
     SparsePixelBuffer.prototype = Object.create( PixelBuffer.prototype );
-    
+    SparsePixelBuffer.prototype.getIndex = function () {
+    }; 
+    SparsePixelBuffer.prototype.getXY = function () {
+    };
+
     PixelBuffer.combine = function (top, bottom, blender) {
         throw new Error("Not Implemented");
     };
