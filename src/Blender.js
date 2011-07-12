@@ -1,4 +1,4 @@
-define("Blender", ["Color"], function (Color) {
+define(["src/Color"], function (Color) {
     var Blender,
 
         // blending modes
@@ -12,10 +12,7 @@ define("Blender", ["Color"], function (Color) {
 
     weighted_mean = function (a, b, w1, w2) {
         var total = Math.min(1, w1 + w2);
-        if (total === 0) {
-            return 0;
-        }
-        return a * w1 + b * (total - w1);
+        return total === 0 ? 0 : a * w1 + b * (total - w1);
     };
     
     Blender = function () {};
@@ -145,5 +142,5 @@ define("Blender", ["Color"], function (Color) {
         return normal.combine(result, bottom);
     };
     /* }}} */
-    return { Blender: Blender };
+    return Blender;
 });

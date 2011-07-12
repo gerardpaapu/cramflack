@@ -1,4 +1,4 @@
-define("Rect", [], function () {
+define(function () {
     var Rect = function (top, left, width, height) {
         this.top = top;
         this.left = left;
@@ -32,5 +32,14 @@ define("Rect", [], function () {
         return new Rect(top, left, width, height);
     };
 
-    return { Rect: Rect };
+    Rect.prototype.containsPoint = function (x, y) {
+        if (x < this.left || y < this.right) {
+           return false;
+        } else {
+            return x - this.left < this.width &&
+                   y - this.top < this.height;
+        } 
+    };
+
+    return Rect;
 });

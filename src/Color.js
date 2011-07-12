@@ -1,4 +1,4 @@
-define("Color", [], function () {
+define(['src/utils'], function () {
     var Color, RGBA, HSLA, FRGBA, 
         floor = Math.floor,
         inv_255 = 1 / 255;
@@ -20,6 +20,10 @@ define("Color", [], function () {
 
         toHSLA: function () {
             return this.toFRGBA().toHSLA();
+        },
+
+        isBlank: function () {
+            return !this.alpha;
         }
     };
 
@@ -51,10 +55,18 @@ define("Color", [], function () {
             return new HSLA(0, 0, l, this.alpha);
         } 
 
-        s = l < 0.5 ? (range/(max + min)):(range/(2 - range));
-        h = red === max ? (green - blue) / range
-            : green === max ? 2 + (blue - red) / range 
-            : 4 + (red - green) / range;
+        s = range / (l < 0.5 ? (max + min) : (2 - range));
+
+        switch (max) {
+        case red:
+            h = (green - blue) / range;
+        break;
+        case green:
+            h = 1 + (blue - red) / range;
+        break;
+        default:
+            h = 4 + (red - green) / range;
+        }
 
         return new HSLA(h / 6, s, l, this.alpha);
     };
@@ -125,40 +137,40 @@ define("Color", [], function () {
             mid2 = value - vsf;
 
             switch (sextant) {
-                case 0: case 6:
-                    red = value;
-                    green = mid1;
-                    blue = median;
-                break;
+            case 0: case 6:
+                red = value;
+                green = mid1;
+                blue = median;
+            break;
 
-                case 1:
-                    red = mid2;
-                    green = value;
-                    blue = median; 
-                break;
+            case 1:
+                red = mid2;
+                green = value;
+                blue = median; 
+            break;
 
-                case 2:
-                    red = median;
-                    green = value;
-                    blue = mid1;
-                break;
+            case 2:
+                red = median;
+                green = value;
+                blue = mid1;
+            break;
 
-                case 3:
-                    red = median;
-                    green = mid2;
-                    blue = value;
-                break;
+            case 3:
+                red = median;
+                green = mid2;
+                blue = value;
+            break;
 
-                case 4:
-                    red = mid1;
-                    green = median;
-                    blue = value;
-                break;
+            case 4:
+                red = mid1;
+                green = median;
+                blue = value;
+            break;
 
-                case 5:
-                    red = value;
-                    green = median;
-                    blue = mid2;
+            case 5:
+                red = value;
+                green = median;
+                blue = mid2;
             }
         }
 
@@ -168,6 +180,10 @@ define("Color", [], function () {
     Color.RGBA = RGBA;
     Color.HSLA = HSLA;
     Color.FRGBA = FRGBA;
+    Color.blank = new FRGBA(0, 0, 0, 0);
+    Color.blank.toRGBA = function () { return this; };
+    Color.blank.toHSLA = function () { return this; };
+    Color.blank.toFRGBA = function () { return this; };
 
-    return { Color: Color };
+    return Color;
 });

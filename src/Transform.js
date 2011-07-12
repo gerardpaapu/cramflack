@@ -1,4 +1,4 @@
-define("Transform", ["PixelBuffer"], function (PixelBuffer) {
+define(["src/PixelBuffer"], function (PixelBuffer) {
     var Transform, Composition, TransformTree, EmptyTree, Flat;
 
     Transform = function () {};
