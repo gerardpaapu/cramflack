@@ -1,4 +1,4 @@
-define(["src/Rect", "src/Color", "src/Blender"], function (Rect, Color, Blender) {
+define(["src/utils", "src/Rect", "src/Color", "src/Blender"], function (_, Rect, Color, Blender) {
     var PixelBuffer, SparsePixelBuffer;
 
     PixelBuffer = function (width, height) {
@@ -8,7 +8,7 @@ define(["src/Rect", "src/Color", "src/Blender"], function (Rect, Color, Blender)
         this.length = rect.width * rect.height;
         this.width = rect.width;
         this.height = rect.height;
-        this.data = Array(this.length);
+        this.data = Array.create(this.length);
     };
     PixelBuffer.prototype = {
         // getIndex: Index -> Color
@@ -49,18 +49,23 @@ define(["src/Rect", "src/Color", "src/Blender"], function (Rect, Color, Blender)
 
             return buffer;
         },
-
+        
         // resizeTo: Rect -> SparsePixelBuffer 
         resizeTo: function (rect) {
             throw new Error("Not Implemented");
         },
 
         // drawToContext: Canvas2DRenderingContext ->
-        drawToContext: function (ctx) {
-            var buffer = ctx.getImageData(0, 0, this.width, this.height);
-            this.writeBytes(buffer);
-            ctx.putImageData(buffer, 0, 0);
+        drawToContext: function (ctx, x, y) {
+            var buffer = ctx.createImageData(this.width, this.height);
+            x = x || 0;
+            y = y || 0;
+            this.writeBytes(buffer.data);
+            ctx.putImageData(buffer, x, y);
         }
+    };
+
+    PixelBuffer.fromBytes = function (width, height, data) {
     };
 
     // Access the contents of an existing PixelBuffer through

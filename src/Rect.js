@@ -4,11 +4,11 @@ define(function () {
         this.left = left;
         this.width = width;
         this.height = height; 
+        this.right = left + width;
+        this.bottom = top + height;
     };
 
     Rect.prototype = {
-        getRight: function () { return this.left + this.width; },    
-        getBottom: function () { return this.top + this.height; }
     }; 
 
     Rect.toContain = function (/* rect, ... */) {
@@ -22,8 +22,8 @@ define(function () {
         while (i--) {
             left = Math.min(left, arguments[i].left); 
             top = Math.min(top, arguments[i].top); 
-            right = Math.max(right, arguments[i].getRight()); 
-            bottom = Math.max(bottom, arguments[i].getBottom()); 
+            right = Math.max(right, arguments[i].right); 
+            bottom = Math.max(bottom, arguments[i].bottom); 
         }
 
         width = right - left;
@@ -34,10 +34,10 @@ define(function () {
 
     Rect.prototype.containsPoint = function (x, y) {
         if (x < this.left || y < this.right) {
-           return false;
+            return false;
         } else {
             return x - this.left < this.width &&
-                   y - this.top < this.height;
+                y - this.top < this.height;
         } 
     };
 

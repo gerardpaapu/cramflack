@@ -3,12 +3,13 @@ define(["src/Color"], function (Color) {
 
         // blending modes
         normal, dissolve,
-        multiply, screen,
+        multiply, add, screen, colorDodge,
         hue, saturation, luminosity,
+        lighten, darken,
 
         weighted_mean;
 
-    /* TODO: implement overlay, color_dodge, burn, darken, lighten */
+    /* TODO: implement overlay, burn */
 
     weighted_mean = function (a, b, w1, w2) {
         var total = Math.min(1, w1 + w2);
@@ -66,9 +67,25 @@ define(["src/Color"], function (Color) {
         top = top.toFRGBA();
         bottom = bottom.toFRGBA();
         
-        result.red   = top.red * bottom.red;
+        result.red   = top.red   * bottom.red;
         result.green = top.green * bottom.green;
-        result.blue  = top.blue * bottom.blue;
+        result.blue  = top.blue  * bottom.blue;
+        result.alpha = top.alpha;
+
+        return normal.combine(result, bottom);
+    };
+
+    add = Blender.add = new Blender();
+    add.name = "Add";
+    add.combine = function (top, bottom) {
+        var result = new Color.FRGBA();
+
+        top = top.toFRGBA();
+        bottom = bottom.toFRGBA();
+        
+        result.red   = top.red   + bottom.red;
+        result.green = top.green + bottom.green;
+        result.blue  = top.blue  + bottom.blue;
         result.alpha = top.alpha;
 
         return normal.combine(result, bottom);
@@ -96,7 +113,52 @@ define(["src/Color"], function (Color) {
         return normal.combine(result, bottom);
     };
 
-    /*Perceptual Color Component blending modes {{{ */
+    colorDodge = Blender.colorDodge = new Blender();
+    colorDodge.name = "Color Dodge";
+    colorDodge.combine = function (top, bottom) {
+        var f, result;
+
+        f = function (a, b) {
+            // I wonder if closure would inline this
+            return b / (1 - a);
+        };
+
+        top = top.toFRGBA();
+        bottom = bottom.toFRGBA();
+        result = new Color.FRGBA(); 
+
+        result.red = f(top.red, bottom.red);
+        result.green = f(top.green, bottom.green);
+        result.blue = f(top.blue, bottom.blue);
+        result.alpha = top.alpha;
+
+        return normal.combine(result, bottom);
+    };
+
+    /* Lighten + Darken {{{ */
+    lighten = Blender.lighten = new Blender();
+    lighten.name = "Lighten";
+    lighten.combine = function (top, bottom) {
+        var result;
+        top    = top.toHSLA();
+        bottom = bottom.toHSLA();
+        result = top.luminosity > bottom.luminosity ? top : bottom;
+
+        return normal.combine(result, bottom);
+    };
+
+    darken = Blender.darken = new Blender();
+    darken.name = "Darken";
+    darken.combine = function (top, bottom) {
+        var result;
+        top    = top.toHSLA();
+        bottom = bottom.toHSLA();
+        result = top.luminosity < bottom.luminosity ? top : bottom;
+
+        return normal.combine(result, bottom);
+    };
+    /* }}} */
+    /* Perceptual Color Component blending modes {{{ */
     hue = Blender.hue = new Blender();
     hue.name = "Hue";
     hue.combine = function (top, bottom) {
