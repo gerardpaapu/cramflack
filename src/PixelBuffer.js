@@ -1,14 +1,14 @@
 define(["src/utils", "src/Rect", "src/Color", "src/Blender"], function (_, Rect, Color, Blender) {
     var PixelBuffer, SparsePixelBuffer;
 
-    PixelBuffer = function (width, height) {
+    PixelBuffer = function (x, y, width, height, data) {
         var buffer, i; 
-        var rect = new Rect(0, 0, width, height);
+        var rect = new Rect(x, y, width, height);
         this.rect = rect;
         this.length = rect.width * rect.height;
         this.width = rect.width;
         this.height = rect.height;
-        this.data = Array.create(this.length);
+        this.data = data || Array.create(this.length);
     };
     PixelBuffer.prototype = {
         // getIndex: Index -> Color
@@ -65,7 +65,21 @@ define(["src/utils", "src/Rect", "src/Color", "src/Blender"], function (_, Rect,
         }
     };
 
-    PixelBuffer.fromBytes = function (width, height, data) {
+    PixelBuffer.fromBytes = function (x, y, width, height, data) {
+        var i = data.length / 4,
+            buffer = Array.create(i),
+            red, green, blue, alpha, j, result;
+
+        while (i--) {
+            j = i * 4; 
+            red   = data[j + 0];
+            green = data[j + 1];
+            blue  = data[j + 2];
+            alpha = data[j + 3];
+            buffer[i] = new Color.RGBA(red, green, blue, alpha);
+        }
+
+        return new PixelBuffer(x, y, width, height, buffer);  
     };
 
     // Access the contents of an existing PixelBuffer through

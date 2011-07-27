@@ -1,7 +1,7 @@
 require(["src/Color", "src/PixelBuffer"], function (Color, PixelBuffer) {
     require.ready(function () {
         var width = 400, height = 400,
-            buffer = new PixelBuffer(width, height),
+            buffer = new PixelBuffer(0, 0, width, height),
             canvas = document.createElement('canvas'),
             body = document.getElementsByTagName('body')[0],
             ctx, data, x, y, i;

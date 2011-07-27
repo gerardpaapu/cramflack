@@ -31,6 +31,8 @@ define(["src/Color"], function (Color) {
     normal.name = "Normal";
     normal.combine = function (top, bottom) {
         var result = new Color.FRGBA();
+        top = top.toRGBA();
+        bottom = bottom.toRGBA();
 
         result.red = weighted_mean(top.red, bottom.red, top.alpha, bottom.alpha); 
         result.green = weighted_mean(top.green, bottom.green, top.alpha, bottom.alpha); 
